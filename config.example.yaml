@@ -1,0 +1,73 @@
+# تنظیمات دستیار کارتابل گام
+# این فایل را به config.yaml کپی کنید و selectorها را با ساختار واقعی صفحات گام تطبیق دهید.
+# برای پیدا کردن selectorها اول دستور `python -m gam_assistant inspect` را اجرا کنید.
+
+gam:
+  # آدرس صفحه‌ی اصلی (بعد از ورود). پارامتر additionalInfo مخصوص هر کاربر است.
+  base_url: "http://gamapp-n1.tamin.org"
+  login_url: "http://gamapp-n1.tamin.org/menu/Index.do"
+  # اگر بعد از ورود باید به صفحه‌ی خاصی بروید (مثلاً کارتابل نامه‌ها)، آدرسش را اینجا بگذارید.
+  inbox_url: ""
+
+  login:
+    username_selector: "input[name='username'], input[type='text']"
+    password_selector: "input[type='password']"
+    submit_selector: "button[type='submit'], input[type='submit']"
+    # المانی که فقط بعد از ورود موفق دیده می‌شود
+    logged_in_selector: "text=خروج"
+
+  inbox:
+    # اگر کارتابل با کلیک روی منو باز می‌شود، متن یا selector آن را بنویسید (به ترتیب کلیک).
+    open_steps:
+      - "text=کارتابل"
+    # هر ردیف نامه در جدول کارتابل
+    row_selector: "table tbody tr"
+    # selector برای تشخیص ردیف نخوانده (مثلاً ردیف bold یا آیکن خاص). خالی = همه‌ی ردیف‌ها.
+    unread_row_selector: "tr.unread, tr:has(b), tr[style*='bold']"
+    # ستون‌ها داخل هر ردیف (selector نسبی نسبت به ردیف)
+    columns:
+      letter_number: "td:nth-child(2)"
+      subject: "td:nth-child(3)"
+      sender: "td:nth-child(4)"
+      date: "td:nth-child(5)"
+      referral_type: "td:nth-child(6)"
+    # روی چه چیزی در ردیف کلیک شود تا نامه باز شود
+    open_letter_selector: "td:nth-child(3)"
+    # دکمه‌ی صفحه‌ی بعد (خالی = فقط صفحه‌ی اول)
+    next_page_selector: ""
+    max_letters: 50
+
+  letter:
+    # بخش متن/تصویر نامه در صفحه‌ی باز شده
+    body_selector: "#letterBody, .letter-content, iframe"
+    # اطلاعات ارجاع (نوع ارجاع، ارجاع‌دهنده، پی‌نوشت ارجاع)
+    referral_info_selector: ".referral, .erja, text=نوع ارجاع >> xpath=.."
+    # لینک پیوست‌ها/فایل اسکن (PDF یا تصویر)
+    attachment_selector: "a[href*='download'], a[href$='.pdf'], a[href*='Attach']"
+    # دکمه‌ی بستن/بازگشت به کارتابل (خالی = page.go_back)
+    close_selector: ""
+    # نامه در پنجره‌ی جدید باز می‌شود؟
+    opens_in_popup: false
+
+ocr:
+  # claude: تصویر نامه مستقیم به Claude داده می‌شود (دقت بالاتر برای فارسی)
+  # tesseract: OCR محلی با Tesseract و زبان fas؛ فقط متن به Claude می‌رود
+  engine: "claude"
+  tesseract_lang: "fas+eng"
+
+summary:
+  model: "claude-opus-5-5"
+  effort: "medium"
+
+output:
+  dir: "output"
+  # نامه‌هایی که قبلاً خلاصه شده‌اند دوباره پردازش نشوند
+  state_file: "output/state.json"
+
+browser:
+  headless: false
+  slow_mo_ms: 200
+  timeout_ms: 30000
+  # روی ویندوز اداری می‌توانید از Edge یا Chrome نصب‌شده استفاده کنید: "msedge" یا "chrome"
+  channel: ""
+  executable_path: ""
